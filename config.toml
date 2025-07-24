@@ -1,0 +1,12 @@
+[config]
+  scale = 3
+
+[inputs]
+  left = 263
+  up = 265
+  right = 262
+  down = 264
+  primary = 90
+  secondary = 65
+  pause = 257
+  menu = 69

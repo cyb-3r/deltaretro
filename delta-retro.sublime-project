@@ -1,0 +1,27 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"rulers": [80]
+	},
+	"build_systems": [
+		{
+			"name": "Debug Build",
+			"cmd": ["make", "debug"],
+			"working_dir": "$project_path"
+		},
+		{
+			"name": "Debug Run",
+			"cmd": ["bin/debug/program"],
+			"working_dir": "$project_path"
+		},
+		{
+			"name": "Release",
+			"cmd": ["make", "release"],
+			"working_dir": "$project_path"
+		}
+	]
+}

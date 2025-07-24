@@ -1,0 +1,11 @@
+# ignore every dot file/folders except gitignore
+.*
+!.gitignore
+
+# other stuff
+bin
+private
+*.sublime-workspace
+*.sh
+*.py
+*.json
