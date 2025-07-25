@@ -41,7 +41,6 @@ void frame_draw(frame_t *self, Texture *atlas, Vector2 position) {
 // FRAME BATCH ] ===============================================================
 frame_t batch_get_frame(frame_batch_t *self, u8 index) {
   if (!self) return (frame_t)EMPTY;
-  TraceLog(LOG_DEBUG, "BATCH: %d < %d ?", index, self->count);
   return (index >= self->count) ?
     self->values[self->count - 1] :
     self->values[index];
@@ -50,12 +49,9 @@ frame_t batch_get_frame(frame_batch_t *self, u8 index) {
 // ANIMATION ] =================================================================
 u8 anim_get_frame_index(animation_t *self, u8 index) {
   if (!self) return 0;
-  for (int i = 0; i < self->frame_count; i++)
-    TraceLog(LOG_DEBUG, "ANIM[%d] = %d", i, self->frames[i]);
   u8 out = (index >= self->frame_count) ?
           self->frames[self->frame_count - 1] :
           self->frames[index];
-  TraceLog(LOG_DEBUG, "ANIM: %d < %d => %d", index, self->frame_count, out);
   return out;
 }
 
@@ -64,11 +60,6 @@ frame_t group_get_frame(anim_group_t *grp, u8 a_index, u8 f_index) {
   if (!grp || !grp->loaded) return (frame_t)EMPTY;
   animation_t *anim = &grp->anims[a_index];
   u8 mapped_index = anim_get_frame_index(anim, f_index);
-  TraceLog(
-    LOG_DEBUG,
-    "ANIM[%d] = FRAME #%d",
-    f_index, mapped_index
-  );
   return batch_get_frame(&grp->frames, mapped_index);
 }
 

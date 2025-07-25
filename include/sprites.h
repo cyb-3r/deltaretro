@@ -48,6 +48,13 @@ typedef struct spr_atlas {
   char anim_path[PATH_LEN];
   u8 group_count;
   anim_group_t groups[ATLASGRP_LEN];
+
+  // this padding is placed here to check if we are dealing with memory
+  // corruption from the goups array
+  // CONCLUSION: it keeps setting loaded count to an absurd value despite
+  // the padding being present, so it's coming from somewhere else...
+  u8 padding[16];
+
   u8 loaded_count;
   u8 loaded_groups[ATLASGRP_LEN];
 } spr_atlas_t;

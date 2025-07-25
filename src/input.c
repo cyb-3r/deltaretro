@@ -2,8 +2,10 @@
 #include "../lib/raylib.h"
 #include "../lib/toml.h"
 
+#include <stdio.h>
+
 #ifndef CONFIG_PATH
-#define CONFIG_PATH "resources/config.toml"
+#define CONFIG_PATH "./config.toml"
 #endif
 
 input_t inputs_default() {
@@ -56,13 +58,21 @@ bool command_load(input_t *self, toml_result_t *res, u8 input_id) {
   else return false;
 }
 
-void input_load(input_t *self) {
+bool input_load(input_t *self) {
   TraceLog(LOG_INFO, "Loading inputs from config");
-  toml_result_t input_data = toml_parse_file_ex(CONFIG_PATH);
-  if (!input_data.ok) {
-    TraceLog(LOG_ERROR, "Couldn't load inputs");
-    return;
+  FILE *f = fopen(CONFIG_PATH, "r");
+  if (!f) {
+    TraceLog(LOG_DEBUG, "Failed loading config file");
+    return false;
   }
+
+  toml_result_t input_data = toml_parse_file(f);
+  if (!input_data.ok) {
+    TraceLog(LOG_ERROR, "Couldn't load inputs in file");
+    fclose(f);
+    return false;
+  }
+
   for (u8 i = 0; i < INPUT_COUNT; i++) {
     const char *input_name = get_input_name(i);
     TraceLog(LOG_DEBUG, "Loading '%s' input", input_name);
@@ -72,8 +82,11 @@ void input_load(input_t *self) {
       input_name
     );
   }
+
   TraceLog(LOG_INFO, "Finished loading inputs");
   toml_free(input_data);
+  fclose(f);
+  return true;
 }
 
 u8 input_read(input_t *self) {

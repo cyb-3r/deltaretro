@@ -3,7 +3,6 @@
 
 // libs
 #include "../lib/raylib.h"
-#include "../lib/toml.h"
 
 // internal headers
 #include "../include/config.h"
@@ -108,7 +107,6 @@ void game_init(game_t *self) {
   ok = sprite_set_grp(&self->player.sprite, "HERO_SWORD");
   if (!ok) TraceLog(LOG_ERROR, "Failed setting sprite group for player");
 
-  TraceLog(LOG_DEBUG, "Player sprite group = %d", self->player.sprite.grp_id);
   self->inputs = inputs_default();
   input_load(&(self->inputs));
 }
@@ -127,21 +125,6 @@ void draw_surface(Texture2D *self, i32 x, i32 y, i32 scale) {
     (Vector2){ 0, 0 },
     0.0f, WHITE
   );
-}
-
-void test_toml() {
-  toml_result_t res = toml_parse_file_ex("resources/test.toml");
-  if (!res.ok)
-    TraceLog(LOG_DEBUG, "Couldn't parse toml file");
-  else {
-    TraceLog(LOG_DEBUG, "Parsed toml file");
-    toml_datum_t val = toml_seek(res.toptab, "config.scale");
-    if (val.type != TOML_INT64)
-      TraceLog(LOG_DEBUG, "Missing or invalid scale value in config");
-    else
-      TraceLog(LOG_DEBUG, "Scale is: %d", val.u.int64);
-  }
-  toml_free(res);
 }
 
 i32 main(void) {

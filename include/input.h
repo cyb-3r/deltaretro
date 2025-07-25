@@ -41,7 +41,7 @@ typedef struct input {
 } input_t;
 
 input_t inputs_default();
-void input_load(input_t *self);
+bool input_load(input_t *self);
 void input_update(input_t *self);
 bool input_is_pressed(input_t *self, u8 command);
 bool input_is_released(input_t *self, u8 command);

@@ -8,6 +8,6 @@ typedef struct config {
 } config_t;
 
 config_t config_default();
-void config_load(config_t *self);
+bool config_load(config_t *self);
 
 #endif
