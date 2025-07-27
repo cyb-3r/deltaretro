@@ -39,11 +39,11 @@ void frame_draw(frame_t *self, Texture *atlas, Vector2 position) {
 }
 
 // FRAME BATCH ] ===============================================================
-frame_t batch_get_frame(frame_batch_t *self, u8 index) {
+frame_t batch_get_frame(atlas_region_t *self, u8 index) {
   if (!self) return (frame_t)EMPTY;
   return (index >= self->count) ?
-    self->values[self->count - 1] :
-    self->values[index];
+    self->frames[self->count - 1] :
+    self->frames[index];
 }
 
 // ANIMATION ] =================================================================
@@ -68,7 +68,7 @@ frame_t atlas_get_frame(atlas_t *self, u8 grp_id, u8 f_index) {
   if (!self) return (frame_t)EMPTY;
   anim_group_t *grp = &self->groups[grp_id];
   if (!grp->loaded) return (frame_t)EMPTY;
-  return grp->frames.values[f_index];
+  return grp->frames.frames[f_index];
 }
 
 u8 atlas_get_anim_id(atlas_t *self, u8 grp_id, const char *name) {
@@ -173,7 +173,7 @@ void sprite_update(sprite_t *self, f32 delta) {
   TraceLog(LOG_DEBUG, "FQPOS HEAD: %d TAIL: %d", self->fq.head, self->fq.tail);
 
   frame_t current_frame =
-      self->atlas->groups[self->grp_id].frames.values[self->frame];
+      self->atlas->groups[self->grp_id].frames.frames[self->frame];
 
   animation_t *current = spr_get_anim(self);
   if (!current) return;
@@ -189,7 +189,7 @@ void sprite_update(sprite_t *self, f32 delta) {
     self->frame = sprite_dq(self);
 
     current_frame =
-      self->atlas->groups[self->grp_id].frames.values[self->frame];
+      self->atlas->groups[self->grp_id].frames.frames[self->frame];
     if (is_last(self)) sprite_nq(self, current->frames, current->frame_count);
   }
   TraceLog(LOG_DEBUG, "timer = %.2f", self->timer);
