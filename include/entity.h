@@ -1,0 +1,40 @@
+#ifndef ENTITY_H
+#define ENTITY_H
+
+#include "../lib/raylib.h"
+#include "types.h"
+#include "sprites.h"
+
+#define ENT_SIZE 16
+#define ENT_SPD 1.0f
+
+enum directions {
+  DIR_DOWN,
+  DIR_UP,
+  DIR_LEFT,
+  DIR_RIGHT,
+};
+
+typedef struct entity {
+  f32 x;
+  f32 y;
+  f32 xsp;
+  f32 ysp;
+
+  i16 life_max;
+  i16 life;
+
+  u8 facing;
+  i16 state;
+  sprite_t sprite;
+} entity_t;
+typedef struct entity ent_t;
+
+Vector2 ent_get_pos(ent_t *self);
+Vector2 ent_get_spd(ent_t *self);
+spr_t *ent_spref(ent_t *self);
+Rectangle ent_rect(ent_t *self);
+
+void ent_apply_spd(ent_t *self);
+
+#endif // ENTITY_H

@@ -15,6 +15,7 @@ typedef struct tileset {
   u16 tile_width, tile_height;
   u8 cols, rows;
 } tileset_t;
+typedef struct tileset tlst_t;
 
 tileset_t tileset_load(const char *path, u16 tile_w, u16 tile_h);
 void tileset_draw_tile(tileset_t *self, u32 tile_id, Vector2 pos);
@@ -25,6 +26,7 @@ typedef struct tilemap {
   u16 width, height;
   u32 *tiles;
 } tilemap_t;
+typedef struct tilemap tlmp_t;
 
 void tilemap_init(tilemap_t *self, tileset_t *set, u16 width, u16 height);
 void tilemap_render(tilemap_t *self, Vector2 pos);

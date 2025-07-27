@@ -1,5 +1,5 @@
 [config]
-  scale = 3
+  scale = 2
 
 [inputs]
   left = 263

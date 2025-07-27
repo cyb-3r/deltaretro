@@ -14,6 +14,8 @@
 #define ANIGRP_NAME_LEN   0x20
 #define PATH_LEN          0x100
 
+#define QUEUE_LEN         0x20
+
 typedef struct frame {
   f32 s_x, s_y, s_width, s_height,
       o_x, o_y;
@@ -53,6 +55,11 @@ typedef struct spr_atlas {
 } spr_atlas_t;
 typedef struct spr_atlas atlas_t;
 
+typedef struct frame_queue {
+  u8 queue[QUEUE_LEN];
+  i8 head, tail;
+} frame_queue_t;
+
 typedef struct sprite {
   atlas_t *atlas;
   u8 grp_id;
@@ -60,13 +67,14 @@ typedef struct sprite {
   f32  timer;
   bool paused;
   u8   frame, anim_id;
+  frame_queue_t fq;
 } sprite_t;
 typedef struct sprite spr_t;
 
 void sprite_swap_anim
 (sprite_t *self, const char *anim_tag);
-void sprite_play_anim
-(sprite_t *self, const char *anim_tag);
+// void sprite_play_anim
+// (sprite_t *self, const char *anim_tag);
 void sprite_update(sprite_t *self, f32 delta);
 void sprite_draw(sprite_t *self, Vector2 pos);
 bool sprite_set_grp(sprite_t *self, const char *group_tag);
