@@ -1,101 +1,109 @@
-// std
 #include <stdio.h>
 
-// libs
 #include "../lib/raylib.h"
 
-// user
-#include "../include/game.h"
-#include "../include/config.h"
-#include "../include/ui.h"
-#include "../include/types.h"
-#include "../include/sprites.h"
+#include "../include/system.h"
 
-#define W_WIDTH 256
-#define W_HEIGHT 224
-#define GAME_FPS 61
+enum exit_code {
+  ERR = -1,
+  OK,
+};
 
-#ifdef DEBUG
-#define TITLE "MANTLE DEBUG"
-#else
-#define TITLE "MANTLE"
-#endif
-
-#define HUD_HEIGHT 32
-#define TILE_SIZE 16
+void title_scr(sys_t*);
+void main_menu(sys_t*);
+void test_loop(sys_t*);
 
 void draw_surface(Texture2D *self, i32 x, i32 y, i32 scale) {
   DrawTexturePro(
     *self,
-    (Rectangle){
-      0, 0,
-      self->width, -(self->height)
-    },
-    (Rectangle){
-      x, y,
-      self->width * scale, self->height * scale
-    },
-    (Vector2){ 0, 0 },
+    (Rectangle){ 0, 0, self->width, -(self->height) },
+    (Rectangle){ x, y, (self->width * scale), (self->height * scale) },
+    (Vector2)EMPTY,
     0.0f, WHITE
   );
 }
 
-i32 main(void) {
+int main(void) {
   #ifdef DEBUG
     SetTraceLogLevel(LOG_DEBUG);
     TraceLog(LOG_DEBUG, "Debug mode is ON");
   #endif
 
-  config_t conf = config_default();
-  config_load(&conf);
+  sys_t sys = EMPTY;
+  const bool ok = system_init(&sys);
+  if (!ok) {
+    TraceLog(LOG_ERROR, "Failed to init system");
+    return ERR;
+  }
 
-  game_t game = EMPTY;
-  RenderTexture2D
-    surface_main = EMPTY,
-    surface_game = EMPTY;
+  while (sys.state != SYS_EXIT && !WindowShouldClose()) {
+    switch(sys.state) {
+      case SYS_TITLE:
+      title_scr(&sys);
+      break;
 
-  InitWindow(
-    W_WIDTH * conf.window_scale,
-    W_HEIGHT * conf.window_scale,
-    TITLE
-  );
-  SetTargetFPS(GAME_FPS);
+      case SYS_TEST:
+      test_loop(&sys);
+      break;
 
-  Texture bg = LoadTexture("resources/gfx/tlmp-board.png");
-  surface_main = LoadRenderTexture(W_WIDTH, W_HEIGHT);
-  surface_game = LoadRenderTexture(W_WIDTH - 32, W_HEIGHT - 32);
+      default:
+      TraceLog(LOG_ERROR, "Undefined system state %d", sys.state);
+      sys.state = SYS_EXIT;
+      break;
+    }
+  }
 
-  game_init(&game);
-  ui_init();
+  system_deinit(&sys);
+  return OK;
+}
 
+void title_scr(sys_t *sys) {
   while (!WindowShouldClose()) {
-    game_update(&game);
+    system_update(sys);
 
-    BeginTextureMode(surface_game);
+    if (input_is_down(&sys->inputs, INPUT_PAUSE)) {
+      sys->state = SYS_TEST;
+      break;
+    }
+
+    BeginTextureMode(sys->surf_main);
       ClearBackground(BLACK);
-      DrawTexture(bg, 16, 16, WHITE);
-      sprite_draw(
-        &game.player.sprite,
-        (Vector2){game.player.x, game.player.y}
-      );
-    EndTextureMode();
-
-    BeginTextureMode(surface_main);
-      ClearBackground(GRAY);
-      draw_surface(&(surface_game.texture), 16, 16, 1);
+      DrawText("Title Screen.jpeg", 16, 16, 10, WHITE);
     EndTextureMode();
 
     BeginDrawing();
-      ClearBackground(GRAY);
-      draw_surface(&(surface_main.texture), 0, 0, conf.window_scale);
+      ClearBackground(BLACK);
+      draw_surface(&sys->surf_main.texture, 0, 0, sys->cfg.window_scale);
+    EndDrawing();
+  }
+}
+
+void test_loop(sys_t *sys) {
+  Texture bg = LoadTexture("resources/gfx/tlmp-board.png");
+  RenderTexture surf_game = LoadRenderTexture(
+    sys->window.width, sys->window.height - 16
+  );
+
+  while (!WindowShouldClose()) {
+    system_update(sys);
+
+    BeginTextureMode(surf_game);
+      ClearBackground(BLACK);
+      DrawTexture(bg, 0, 0, WHITE);
+      game_draw(&sys->game);
+    EndTextureMode();
+
+    BeginTextureMode(sys->surf_main);
+      ClearBackground(BLACK);
+      draw_surface(&surf_game.texture, 0, 16, 1);
+    EndTextureMode();
+
+    BeginDrawing();
+      ClearBackground(BLACK);
+      draw_surface(&sys->surf_main.texture, 0, 0, sys->cfg.window_scale);
     EndDrawing();
   }
 
-  UnloadRenderTexture(surface_main);
-  atlas_unload(&game.animations);
   UnloadTexture(bg);
-  ui_deinit();
-  CloseWindow();
-
-  return 0;
+  UnloadRenderTexture(surf_game);
 }

@@ -3,16 +3,21 @@
 
 #include "../lib/raylib.h"
 #include "types.h"
-#include "sprites.h"
 
 #define ENT_SIZE 16
 #define ENT_SPD 1.0f
 
-enum directions {
-  DIR_DOWN,
-  DIR_UP,
-  DIR_LEFT,
-  DIR_RIGHT,
+enum ent_directions {
+  ENT_DIR_D,
+  ENT_DIR_R,
+  ENT_DIR_U,
+  ENT_DIR_L,
+};
+
+enum ent_type {
+  ENT_TP_PLR,
+  ENT_TP_NPC,
+  ENT_TP_ENN,
 };
 
 typedef struct entity {
@@ -25,15 +30,14 @@ typedef struct entity {
   i16 life;
 
   u8 facing;
-  i16 state;
-  sprite_t sprite;
+  u8 state;
 } entity_t;
 typedef struct entity ent_t;
 
 Vector2 ent_get_pos(ent_t *self);
 Vector2 ent_get_spd(ent_t *self);
-spr_t *ent_spref(ent_t *self);
 Rectangle ent_rect(ent_t *self);
+Rectangle ent_coll(ent_t *self);
 
 void ent_apply_spd(ent_t *self);
 

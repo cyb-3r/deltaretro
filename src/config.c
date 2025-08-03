@@ -3,8 +3,7 @@
 #include "../lib/raylib.h"
 
 #include <stdio.h>
-
-#define CONFIG_PATH "./config.toml"
+#include <string.h>
 
 config_t config_default() {
   return (config_t){
@@ -12,9 +11,13 @@ config_t config_default() {
   };
 }
 
-bool config_load(config_t *self) {
+bool config_load(config_t *self, const char *path) {
   TraceLog(LOG_INFO, "Loading configs");
-  FILE *f = fopen(CONFIG_PATH, "r");
+
+  strncpy(self->path, path, CFG_PATH_LEN-1);
+  self->path[CFG_PATH_LEN-1] = '\0';
+
+  FILE *f = fopen(self->path, "r");
   if (!f) {
     TraceLog(LOG_ERROR, "Failed loading config");
     return false;
