@@ -6,19 +6,37 @@
 static Font main_font = {0};
 
 void ui_init() {
+  TraceLog(LOG_INFO, "Loading game font");
   main_font = LoadFont(FONT_PATH);
 }
 
 void ui_deinit() {
+  TraceLog(LOG_INFO, "Unloading game font");
   UnloadFont(main_font);
 }
 
-void draw_text_col(const char *text, Vector2 pos, Color color) {
-  DrawTextEx(main_font, text, pos, main_font.baseSize, FONT_SPACING, color);
+Vector2 adjust_pos(i32 x, i32 y) {
+  return (Vector2) {x, y - 2};
 }
 
-void draw_text(const char *text, Vector2 pos) {
-  DrawTextEx(main_font, text, pos, main_font.baseSize, FONT_SPACING, WHITE);
+void draw_text_col(const char *text, i32 x, i32 y, Color color) {
+  DrawTextEx(main_font,
+    text,
+    adjust_pos(x, y),
+    main_font.baseSize,
+    FONT_SPACING,
+    color
+  );
+}
+
+void draw_text(const char *text, i32 x, i32 y) {
+  DrawTextEx(main_font,
+    text,
+    adjust_pos(x, y),
+    main_font.baseSize,
+    FONT_SPACING,
+    WHITE
+  );
 }
 
 void lifebar_draw(i32 life_max, i32 life, i32 x, i32 y, u8 width) {

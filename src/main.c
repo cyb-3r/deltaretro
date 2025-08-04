@@ -9,20 +9,6 @@ enum exit_code {
   OK,
 };
 
-void title_scr(sys_t*);
-void main_menu(sys_t*);
-void test_loop(sys_t*);
-
-void draw_surface(Texture2D *self, i32 x, i32 y, i32 scale) {
-  DrawTexturePro(
-    *self,
-    (Rectangle){ 0, 0, self->width, -(self->height) },
-    (Rectangle){ x, y, (self->width * scale), (self->height * scale) },
-    (Vector2)EMPTY,
-    0.0f, WHITE
-  );
-}
-
 int main(void) {
   #ifdef DEBUG
     SetTraceLogLevel(LOG_DEBUG);
@@ -42,6 +28,10 @@ int main(void) {
       title_scr(&sys);
       break;
 
+      case SYS_MENU:
+      main_menu(&sys);
+      break;
+
       case SYS_TEST:
       test_loop(&sys);
       break;
@@ -55,55 +45,4 @@ int main(void) {
 
   system_deinit(&sys);
   return OK;
-}
-
-void title_scr(sys_t *sys) {
-  while (!WindowShouldClose()) {
-    system_update(sys);
-
-    if (input_is_down(&sys->inputs, INPUT_PAUSE)) {
-      sys->state = SYS_TEST;
-      break;
-    }
-
-    BeginTextureMode(sys->surf_main);
-      ClearBackground(BLACK);
-      DrawText("Title Screen.jpeg", 16, 16, 10, WHITE);
-    EndTextureMode();
-
-    BeginDrawing();
-      ClearBackground(BLACK);
-      draw_surface(&sys->surf_main.texture, 0, 0, sys->cfg.window_scale);
-    EndDrawing();
-  }
-}
-
-void test_loop(sys_t *sys) {
-  Texture bg = LoadTexture("resources/gfx/tlmp-board.png");
-  RenderTexture surf_game = LoadRenderTexture(
-    sys->window.width, sys->window.height - 16
-  );
-
-  while (!WindowShouldClose()) {
-    system_update(sys);
-
-    BeginTextureMode(surf_game);
-      ClearBackground(BLACK);
-      DrawTexture(bg, 0, 0, WHITE);
-      game_draw(&sys->game);
-    EndTextureMode();
-
-    BeginTextureMode(sys->surf_main);
-      ClearBackground(BLACK);
-      draw_surface(&surf_game.texture, 0, 16, 1);
-    EndTextureMode();
-
-    BeginDrawing();
-      ClearBackground(BLACK);
-      draw_surface(&sys->surf_main.texture, 0, 0, sys->cfg.window_scale);
-    EndDrawing();
-  }
-
-  UnloadTexture(bg);
-  UnloadRenderTexture(surf_game);
 }

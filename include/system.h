@@ -9,8 +9,6 @@
 
 #define W_WIDTH   192
 #define W_HEIGHT  144
-#define GAME_FPS  61
-#define CFG_PATH  "./config.toml"
 
 typedef struct window {
   u32 width;
@@ -25,6 +23,7 @@ u32 win_get_h(win_t*);
 
 enum sys_state {
   SYS_TITLE,
+  SYS_MENU,
   SYS_TEST,
   SYS_EXIT
 };
@@ -42,5 +41,11 @@ typedef struct system sys_t;
 bool system_init(sys_t*);
 void system_deinit(sys_t*);
 void system_update(sys_t*);
+
+void draw_surface(Texture2D*, i32 x, i32 y, i32 scale);
+
+void title_scr(sys_t*);
+void main_menu(sys_t*);
+void test_loop(sys_t*);
 
 #endif // SYS_H
