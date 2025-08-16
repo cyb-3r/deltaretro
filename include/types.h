@@ -27,4 +27,9 @@ typedef double    f64;
 typedef size_t    usize;
 typedef ptrdiff_t isize;
 
+typedef struct Vector2   v2_t;
+typedef struct Vector3   v3_t;
+typedef struct Vector4   v4_t;
+typedef struct Rectangle rec_t;
+
 #endif // TYPES_H

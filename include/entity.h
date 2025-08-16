@@ -1,7 +1,7 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
-#include "../lib/raylib.h"
+#include "raylib.h"
 #include "types.h"
 
 #define ENT_SIZE 16
@@ -34,11 +34,11 @@ typedef struct entity {
 } entity_t;
 typedef struct entity ent_t;
 
-Vector2 ent_get_pos(ent_t *self);
-Vector2 ent_get_spd(ent_t *self);
-Rectangle ent_rect(ent_t *self);
-Rectangle ent_coll(ent_t *self);
+v2_t ent_get_pos(ent_t*);
+v2_t ent_get_spd(ent_t*);
+rec_t ent_rect(ent_t*);
+rec_t ent_coll(ent_t*);
 
-void ent_apply_spd(ent_t *self);
+void ent_apply_spd(ent_t*);
 
 #endif // ENTITY_H

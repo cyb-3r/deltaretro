@@ -1,6 +1,6 @@
-#include "../include/config.h"
-#include "../lib/toml.h"
-#include "../lib/raylib.h"
+#include "config.h"
+#include "toml.h"
+#include "raylib.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -39,4 +39,3 @@ bool config_load(config_t *self, const char *path) {
   fclose(f);
   return true;
 }
-

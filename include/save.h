@@ -1,7 +1,7 @@
 #ifndef SAVE_H
 #define SAVE_H
 
-#include "../include/types.h"
+#include "types.h"
 
 #define SAVE_MAX 3
 #define SAVE_NAME_LEN 8

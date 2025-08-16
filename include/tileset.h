@@ -1,7 +1,7 @@
 #ifndef TILESET_H
 #define TILESET_H
 
-#include "../lib/raylib.h"
+#include "raylib.h"
 #include "types.h"
 
 typedef enum tile_size {

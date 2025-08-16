@@ -1,9 +1,15 @@
-#include "../include/system.h"
-#include "../include/ui.h"
-#include "../include/save.h"
+#include "system.h"
+#include "ui.h"
+#include "save.h"
 
 #define GAME_FPS  61
 #define CFG_PATH  "./config.toml"
+
+u32 win_get_w(win_t*);
+u32 win_get_h(win_t*);
+void draw_cursor(int select);
+void sd_draw(sd_t*, int y);
+void hud_draw(const char *name, int pts);
 
 u32 win_get_w(win_t *self) {
   return self->width * self->scale;
@@ -27,15 +33,8 @@ bool system_init(sys_t *self) {
   InitWindow(win_get_w(&self->window), win_get_h(&self->window), TITLE);
   SetTargetFPS(self->window.fps);
 
-  sd_t test_sd = (sd_t) {"Cybits", 69, 1};
   bool sd_ok = sf_init();
   if (!sd_ok) TraceLog(LOG_ERROR, "Save system is broken :(");
-  else {
-    TraceLog(LOG_DEBUG, "Save system works :)");
-    sd_ok = sd_write(&test_sd, 2);
-    sd_ok = sd_read();
-    if (!sd_ok) TraceLog(LOG_ERROR, "But can't read save properly :(");
-  }
 
   #ifdef DEBUG
   SetExitKey(KEY_BACKSPACE);
@@ -63,18 +62,19 @@ void system_update(sys_t *self) {
   game_update(&self->game, &self->inputs);
 }
 
-void draw_surface(Texture2D *self, i32 x, i32 y, i32 scale) {
+void surf_draw(Texture *self, i32 x, i32 y, i32 scale) {
   DrawTexturePro(
     *self,
-    (Rectangle){ 0, 0, self->width, -(self->height) },
-    (Rectangle){ x, y, (self->width * scale), (self->height * scale) },
-    (Vector2)EMPTY,
+    (rec_t){ 0, 0, self->width, -(self->height) },
+    (rec_t){ x, y, (self->width * scale), (self->height * scale) },
+    (v2_t)EMPTY,
     0.0f, WHITE
   );
 }
 
 void title_scr(sys_t *sys) {
   TraceLog(LOG_INFO, "Entering TITLE");
+  const Color c = {0x42, 0x45, 0xE5 , 0xFF};
   while (!WindowShouldClose()) {
     system_update(sys);
 
@@ -84,53 +84,37 @@ void title_scr(sys_t *sys) {
     }
 
     BeginTextureMode(sys->surf_main);
-      ClearBackground(BLACK);
-      draw_text("DELTARETRO.JPEG", 8, 8);
-      draw_text("POWERED BY RAYLIB", 8, W_HEIGHT - 8);
+      ClearBackground(c);
+      draw_text("PRESS  START", 48, 112);
     EndTextureMode();
 
     BeginDrawing();
-      ClearBackground(BLACK);
-      draw_surface(&sys->surf_main.texture, 0, 0, sys->cfg.window_scale);
+      ClearBackground(c);
+      surf_draw(&sys->surf_main.texture, 0, 0, sys->cfg.window_scale);
     EndDrawing();
   }
 }
 
-void draw_cursor(int slc) {
-  switch (slc) {
-    case 0:
-    DrawRectangleRec((Rectangle){
-      24, 32, 7, 7
-    }, RED);
-    break;
-    case 1:
-    DrawRectangleRec((Rectangle){
-      24, 64, 7, 7
-    }, RED);
-    break;
-    case 2:
-    DrawRectangleRec((Rectangle){
-      24, 96, 7, 7
-    }, RED);
-    break;
-    case 3:
-    DrawRectangleRec((Rectangle){
-      16, 128, 7, 7
-    }, RED);
-    break;
-    case 4:
-    DrawRectangleRec((Rectangle){
-      72, 128, 7, 7
-    }, RED);
-    break;
-    case 5:
-    DrawRectangleRec((Rectangle){
-      136, 128, 7, 7
-    }, RED);
-    break;
-    default:
-    break;
+void draw_cursor(int select) {
+  const Color c = RED;
+  const v2_t size = { 7, 7 };
+  v2_t pos = EMPTY;
+  switch (select) {
+    case 0: pos = (v2_t){ 24, 32 };   break;
+    case 1: pos = (v2_t){ 24, 64 };   break;
+    case 2: pos = (v2_t){ 24, 96 };   break;
+    case 3: pos = (v2_t){ 16, 128 };  break;
+    case 4: pos = (v2_t){ 72, 128 };  break;
+    case 5: pos = (v2_t){ 136, 128 }; break;
+    default: return;
   }
+  DrawRectangle(pos.x, pos.y, size.x, size.y,c);
+}
+
+void sd_draw(sd_t *data, int y) {
+  DrawRectangleRec((rec_t){ 40, y, 16, 16 }, BLUE);
+  draw_text(TextFormat("%s", data->name), 64, y);
+  draw_text(TextFormat("%04i LV-%i", data->points, data->lv), 80,y + 8);
 }
 
 void main_menu(sys_t *sys) {
@@ -148,6 +132,7 @@ void main_menu(sys_t *sys) {
 
     if (input_is_pressed(&sys->inputs, INPUT_PRIM)) {
       if (select < 3) {
+        sys->save_slot = select + 1;
         for (int i = 0; i < SAVE_NAME_LEN; i++)
           sys->game.plr_data.name[i] = saves[select].name[i];
         sys->game.plr_data.pts = saves[select].points;
@@ -171,30 +156,22 @@ void main_menu(sys_t *sys) {
       const int y_off = 32;
       for (int i = 0; i < SAVE_MAX; i++) {
         const int loop_off = i * (4 * 8);
-        DrawRectangleRec((Rectangle){
-          40, y_off + loop_off,
-          16, 16
-        }, BLUE);
-        draw_text(
-          TextFormat("%s", saves[i].name),
-          64,
-          y_off + loop_off
-        );
-        draw_text(
-          TextFormat("%04i LV-%i", saves[i].points, saves[i].lv),
-          80,
-          y_off + loop_off + 8
-        );
+        sd_draw(&saves[i], y_off + loop_off);
       }
       draw_text("COPY   ERASE   END", 24, W_HEIGHT - 16);
     EndTextureMode();
 
     BeginDrawing();
       ClearBackground(BLACK);
-      draw_surface(&sys->surf_main.texture, 0, 0, sys->cfg.window_scale);
+      surf_draw(&sys->surf_main.texture, 0, 0, sys->cfg.window_scale);
     EndDrawing();
   }
   UnloadTexture(bg);
+}
+
+inline void hud_draw(const char *name, int pts) {
+  draw_text(TextFormat("%s", name), 8, 8);
+  draw_text(TextFormat("P%04i", pts), 8 * 10, 8);
 }
 
 void test_loop(sys_t *sys) {
@@ -215,14 +192,13 @@ void test_loop(sys_t *sys) {
 
     BeginTextureMode(sys->surf_main);
       ClearBackground(BLACK);
-      draw_text(TextFormat("%s", sys->game.plr_data.name), 8, 0);
-      draw_text(TextFormat("P %04i", sys->game.plr_data.pts), W_WIDTH - 48, 0);
-      draw_surface(&surf_game.texture, 0, 16, 1);
+      hud_draw(sys->game.plr_data.name, sys->game.plr_data.pts);
+      surf_draw(&surf_game.texture, 0, 16, 1);
     EndTextureMode();
 
     BeginDrawing();
       ClearBackground(BLACK);
-      draw_surface(&sys->surf_main.texture, 0, 0, sys->cfg.window_scale);
+      surf_draw(&sys->surf_main.texture, 0, 0, sys->cfg.window_scale);
     EndDrawing();
   }
 

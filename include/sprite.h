@@ -2,7 +2,7 @@
 #define SPRITES_H
 
 #include "types.h"
-#include "../lib/raylib.h"
+#include "raylib.h"
 
 #define ATLAS_NAME_LEN 0x20
 

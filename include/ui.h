@@ -1,7 +1,7 @@
 #ifndef UI_H
 #define UI_H
 
-#include "../lib/raylib.h"
+#include "raylib.h"
 #include "types.h"
 
 void ui_init(void);

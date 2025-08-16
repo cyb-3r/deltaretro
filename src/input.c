@@ -1,6 +1,6 @@
-#include "../include/input.h"
-#include "../lib/raylib.h"
-#include "../lib/toml.h"
+#include "input.h"
+#include "raylib.h"
+#include "toml.h"
 
 #include <stdio.h>
 

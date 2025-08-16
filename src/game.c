@@ -1,5 +1,5 @@
-#include "../include/game.h"
-#include "../include/player.h"
+#include "game.h"
+#include "player.h"
 
 #define W_WIDTH 256
 #define W_HEIGHT 224
@@ -8,8 +8,8 @@
 void game_init(game_t *self) {
   self->player.life_max = 20;
   self->player.life = 20;
-  self->player.x = ((float)W_WIDTH / 2.0f) - 8.0f;
-  self->player.y = ((float)(W_HEIGHT - HUD_HEIGHT) / 2.0f) - 8.0f;
+  self->player.x = ((f32)W_WIDTH / 2.0f) - 8.0f;
+  self->player.y = ((f32)(W_HEIGHT - HUD_HEIGHT) / 2.0f) - 8.0f;
 }
 
 void update_delta(game_t *self) {

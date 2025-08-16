@@ -1,8 +1,8 @@
 #include <stdio.h>
 
-#include "../lib/raylib.h"
+#include "raylib.h"
 
-#include "../include/system.h"
+#include "system.h"
 
 enum exit_code {
   ERR = -1,
@@ -18,26 +18,18 @@ int main(void) {
   sys_t sys = EMPTY;
   const bool ok = system_init(&sys);
   if (!ok) {
-    TraceLog(LOG_ERROR, "Failed to init system");
+    TraceLog(LOG_FATAL, "Failed to init system");
     return ERR;
   }
 
   while (sys.state != SYS_EXIT && !WindowShouldClose()) {
     switch(sys.state) {
-      case SYS_TITLE:
-      title_scr(&sys);
-      break;
-
-      case SYS_MENU:
-      main_menu(&sys);
-      break;
-
-      case SYS_TEST:
-      test_loop(&sys);
-      break;
+      case SYS_TITLE: title_scr(&sys); break;
+      case SYS_MENU: main_menu(&sys);  break;
+      case SYS_TEST: test_loop(&sys);  break;
 
       default:
-      TraceLog(LOG_ERROR, "Undefined system state %d", sys.state);
+      TraceLog(LOG_FATAL, "Undefined system state %d", sys.state);
       sys.state = SYS_EXIT;
       break;
     }

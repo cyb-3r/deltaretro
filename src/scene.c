@@ -1,4 +1,4 @@
-#include "../include/scene.h"
+#include "scene.h"
 
 bool screen_gcoll(scr_t *self, const u8 x, const u8 y) {
   if (!self) return false;

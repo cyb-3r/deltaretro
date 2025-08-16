@@ -1,4 +1,4 @@
-#include "../include/ui.h"
+#include "ui.h"
 
 #define FONT_PATH "resources/gfx/font-mono.png"
 #define FONT_SPACING 0.0f
@@ -16,7 +16,7 @@ void ui_deinit() {
 }
 
 Vector2 adjust_pos(i32 x, i32 y) {
-  return (Vector2) {x, y - 2};
+  return (v2_t) {x, y - 2};
 }
 
 void draw_text_col(const char *text, i32 x, i32 y, Color color) {
@@ -42,7 +42,7 @@ void draw_text(const char *text, i32 x, i32 y) {
 void lifebar_draw(i32 life_max, i32 life, i32 x, i32 y, u8 width) {
   DrawRectangle(x, y, width, 8, DARKGRAY);
   DrawRectangle(x, y,
-    (int)(width * ((float)life/(float)life_max)),
+    (int)(width * ((f32)life/(f32)life_max)),
     8, WHITE
   );
 }

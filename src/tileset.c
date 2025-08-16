@@ -1,4 +1,4 @@
-#include "../include/tileset.h"
+#include "tileset.h"
 #include <stdlib.h>
 #include <math.h>
 

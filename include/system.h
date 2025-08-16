@@ -1,11 +1,11 @@
 #ifndef SYS_H
 #define SYS_H
 
+#include "raylib.h"
 #include "types.h"
 #include "config.h"
 #include "input.h"
 #include "game.h"
-#include "../lib/raylib.h"
 
 #define W_WIDTH   192
 #define W_HEIGHT  144
@@ -31,6 +31,7 @@ enum sys_state {
 typedef struct system {
   win_t window;
   u8 state;
+  u8 save_slot;
   config_t cfg;
   input_t inputs;
   game_t game;
@@ -42,10 +43,11 @@ bool system_init(sys_t*);
 void system_deinit(sys_t*);
 void system_update(sys_t*);
 
-void draw_surface(Texture2D*, i32 x, i32 y, i32 scale);
+void surf_draw(Texture*, i32 x, i32 y, i32 scale);
 
 void title_scr(sys_t*);
 void main_menu(sys_t*);
 void test_loop(sys_t*);
+void wld_select(sys_t*);
 
 #endif // SYS_H

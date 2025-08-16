@@ -1,5 +1,5 @@
-#include "../lib/raylib.h"
-#include "../include/save.h"
+#include "raylib.h"
+#include "save.h"
 #include <stdio.h>
 
 #define ITEM_AMOUNT 8
@@ -10,6 +10,10 @@
 struct sf_header {
   char magic[8];
   u8 version;
+};
+
+struct sd_header {
+  bool empty;
 };
 
 bool sf_create_empty(void);

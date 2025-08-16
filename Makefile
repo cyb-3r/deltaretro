@@ -1,34 +1,42 @@
-CC = cc
-CFLAGS = -Wall -Wextra -std=c99
-DFLAGS = -g
-RFLAGS = -O2
-NAME = program
+CC 	    := cc
+SOURCES := $(wildcard src/*.c)
+OBJECTS := ${SOURCES:.c=.o}
+CFLAGS 	:= -Wall -Wextra -std=c99
 
-INC_D = ./include
-SRC_D = ./src
-LIB_D = ./lib
-OUT_D = ./bin
+DFLAGS 	:= -DDEBUG -g
+RFLAGS 	:= -O2
 
-DBD = $(OUT_D)/debug
-RLD = $(OUT_D)/release
+BIN    := program
+I_PATH := include
+L_PATH := lib
+B_PATH := bin
 
-LIB = -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL $(LIB_D)/libraylib.a $(LIB_D)/toml.a
-SRC = $(SRC_D)/*.c
-DBG = $(DBD)/$(NAME)
-RLS = $(RLD)/$(NAME)
+DIR_DEBUG 	:= ${B_PATH}/debug
+DIR_RELEASE := ${B_PATH}/release
 
-all: release debug
+FRMK := $(addprefix -framework ,CoreVideo IOKit Cocoa GLUT OpenGL)
+LIBS := libraylib.a toml.a
+DPCS := ${FRMK} $(addprefix ${L_PATH}/,${LIBS})
 
-$(DBD) $(RLD):
+DBG := ${DIR_DEBUG}/${BIN}
+RLS := ${DIR_RELEASE}/${BIN}
+
+release: CFLAGS += ${RFLAGS}
+debug: CFLAGS += ${DFLAGS}
+
+%.o: %.c
+	${CC} ${CFLAGS} -I${I_PATH} -o $@ -c $<
+
+${DIR_DEBUG} ${DIR_RELEASE}:
 	mkdir -p $@
 
-release: $(RLD)
-	$(CC) $(CFLAGS) $(RFLAGS) $(SRC) -o $(RLS) $(LIB)
+release: ${OBJECTS} | ${DIR_RELEASE}
+	${CC} ${CFLAGS} ${OBJECTS} -o ${RLS} ${DPCS}
 
-debug: $(DBD)
-	$(CC) -DDEBUG $(CFLAGS) $(DFLAGS) $(SRC) -o $(DBG) $(LIB)
+debug: ${OBJECTS} | ${DIR_DEBUG}
+	${CC} ${CFLAGS} ${OBJECTS} -o ${DBG} ${DPCS}
 
 clean:
-	rm -rf ./bin/*
+	${RM} -r ${OBJECTS} ${DIR_DEBUG}/* ${DIR_RELEASE}/*
 
-.PHONY: all release debug clean
+.PHONY: release debug clean

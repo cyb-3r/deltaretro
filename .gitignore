@@ -2,8 +2,12 @@
 .*
 !.gitignore
 
-# other stuff
+# comp leftovers
+*.o
+*.dSYM
 bin
+
+# other stuff
 private
 *.sublime-workspace
 *.sh
