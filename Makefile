@@ -6,17 +6,17 @@ CFLAGS 	:= -Wall -Wextra -std=c99
 DFLAGS 	:= -DDEBUG -g
 RFLAGS 	:= -O2
 
-BIN    := program
-I_PATH := include
-L_PATH := lib
-B_PATH := bin
+BIN     := program
+I_PATH  := include
+L_PATH  := lib
+B_PATH  := bin
 
 DIR_DEBUG 	:= ${B_PATH}/debug
 DIR_RELEASE := ${B_PATH}/release
 
 FRMK := $(addprefix -framework ,CoreVideo IOKit Cocoa GLUT OpenGL)
-LIBS := libraylib.a toml.a
-DPCS := ${FRMK} $(addprefix ${L_PATH}/,${LIBS})
+LIBS := toml.a
+DPCS := ${FRMK} -lraylib $(addprefix ${L_PATH}/,${LIBS})
 
 DBG := ${DIR_DEBUG}/${BIN}
 RLS := ${DIR_RELEASE}/${BIN}

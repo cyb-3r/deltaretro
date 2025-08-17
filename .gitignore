@@ -1,16 +1,19 @@
-# ignore every dot file/folders except gitignore
+# dot files
 .*
 !.gitignore
 
-# comp leftovers
+# compilation
 *.o
 *.dSYM
 bin
 
-# other stuff
-private
-*.sublime-workspace
+# utils scripts
 *.sh
 *.py
+
+# misc
+private
+*.sublime-workspace
 *.json
 *.aseprite
+save.bin
