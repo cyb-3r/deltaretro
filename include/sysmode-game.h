@@ -1,7 +1,7 @@
 #ifndef SYSMODE_GAME_H
 #define SYSMODE_GAME_H
 
-#include "../system.h"
+#include "system.h"
 
 void mode_game_begin(sys_t*);
 void mode_game_update(sys_t*);

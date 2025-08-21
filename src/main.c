@@ -2,10 +2,9 @@
 
 #include "raylib.h"
 
-#include "sysmode/title.h"
-#include "sysmode/file.h"
-#include "sysmode/game.h"
-#include "system.h"
+#include "sysmode-title.h"
+#include "sysmode-file.h"
+#include "sysmode-game.h"
 
 enum exit_code {
   ERR = -1,
@@ -57,6 +56,7 @@ void begin(sys_t *sys) {
 }
 
 void update(sys_t *sys) {
+  if (sys->changing_state) return;
   system_update(sys);
   switch(sys->state) {
     case SYS_TITLE: mode_title_update(sys); break;
@@ -71,6 +71,7 @@ void update(sys_t *sys) {
 }
 
 void draw(sys_t *sys) {
+  if (sys->changing_state) return;
   switch(sys->state) {
     case SYS_TITLE: mode_title_draw(sys); break;
     case SYS_MENU:  mode_file_draw(sys); break;
@@ -81,6 +82,11 @@ void draw(sys_t *sys) {
     system_change_state(sys, SYS_EXIT);
     break;
   }
+
+  BeginDrawing();
+    ClearBackground(BLACK);
+    surf_draw(&sys->surf_main.texture, 0, 0, sys->cfg.window_scale);
+  EndDrawing();
 }
 
 void end(sys_t *sys) {

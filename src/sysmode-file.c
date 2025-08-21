@@ -1,5 +1,4 @@
-#include "sysmode/file.h"
-#include "raylib.h"
+#include "sysmode-file.h"
 #include "ui.h"
 #include "save.h"
 
@@ -7,76 +6,90 @@
 void draw_cursor(i8);
 void sd_draw(sd_t*, i16);
 
-static tex_t bg;
-static i8 select;
-static sd_t save_data[SAVE_MAX];
+enum cursor_pos {
+  POS_SAVE_1,
+  POS_SAVE_2,
+  POS_SAVE_3,
+  POS_COPY,
+  POS_ERASE,
+  POS_END,
+};
+
+/*== Local vars ==*/
+static tex_t  s_bg;
+static i8     s_select;
+static sd_t   s_save_data[SAVE_MAX];
 
 void mode_file_begin(sys_t *sys) {
   TraceLog(LOG_INFO, "Entering MENU");
-  select = 0;
-  bg = LoadTexture("resources/gfx/bg-save.png");
 
-  for (i8 i = 0; i < SAVE_MAX; i++) sd_load(&save_data[i], (i + 1));
+  s_select = 0;
+  s_bg = LoadTexture("resources/gfx/bg-save.png");
+
+  bool sd_ok = sf_init();
+  if (!sd_ok) {
+    TraceLog(LOG_ERROR, "Save system is broken :(");
+    system_exit(sys);
+  }
+
+  for (i8 i = 0; i < SAVE_MAX; i++)
+    sd_load(&s_save_data[i], (i + 1));
 }
 
 void mode_file_update(sys_t *sys) {
   if (input_is_pressed(&sys->inputs, INPUT_PRIM)) {
-    if (select < 3) {
-      sys->save_slot = select + 1;
+    if (s_select < POS_COPY) {
+      sys->save_slot = s_select + 1;
 
       for (int i = 0; i < SAVE_NAME_LEN; i++)
-        sys->game.plr_data.name[i] = save_data[select].name[i];
-      sys->game.plr_data.pts = save_data[select].points;
-      sys->game.plr_data.lv = save_data[select].lv;
+        sys->game.plr_data.name[i] = s_save_data[s_select].name[i];
+      sys->game.plr_data.pts = s_save_data[s_select].points;
+      sys->game.plr_data.lv = s_save_data[s_select].lv;
 
       system_change_state(sys, SYS_TEST);
       return;
     } else {
-      system_change_state(sys, SYS_EXIT);
+      system_exit(sys);
       return;
     }
   }
 
   if (input_is_pressed(&sys->inputs, INPUT_MENU))
-    select = (select + 1) % 6;
+    s_select = (s_select + 1) % 6;
 }
 
 void mode_file_draw(sys_t *sys) {
   BeginTextureMode(sys->surf_main);
     ClearBackground(BLACK);
-    DrawTexture(bg, 0, 0, WHITE);
+    DrawTexture(s_bg, 0, 0, WHITE);
     draw_text("FILE SELECT", 16, 8);
-    draw_cursor(select);
+    draw_cursor(s_select);
     const i8 y_off = 32;
     for (i8 i = 0; i < SAVE_MAX; i++) {
       const i16 loop_off = i * (4 * 8);
-      sd_draw(&save_data[i], y_off + loop_off);
+      sd_draw(&s_save_data[i], y_off + loop_off);
     }
-    draw_text("COPY   ERASE   END", 24, W_HEIGHT - 16);
+    draw_text("COPY   ERASE   END", 24, win_get_h(&sys->window) - 16);
   EndTextureMode();
-
-  BeginDrawing();
-    ClearBackground(BLACK);
-    surf_draw(&sys->surf_main.texture, 0, 0, sys->cfg.window_scale);
-  EndDrawing();
 }
 
 void mode_file_end(sys_t *sys) {
   TraceLog(LOG_INFO, "Exiting MENU");
-  UnloadTexture(bg);
+  UnloadTexture(s_bg);
 }
 
+/*== Utils impl ==*/
 void draw_cursor(i8 select) {
   const col_t c = RED;
   const v2_t size = { 7, 7 };
   v2_t pos = EMPTY;
   switch (select) {
-    case 0: pos = (v2_t){ 24, 32 };   break;
-    case 1: pos = (v2_t){ 24, 64 };   break;
-    case 2: pos = (v2_t){ 24, 96 };   break;
-    case 3: pos = (v2_t){ 16, 128 };  break;
-    case 4: pos = (v2_t){ 72, 128 };  break;
-    case 5: pos = (v2_t){ 136, 128 }; break;
+    case POS_SAVE_1:  pos = (v2_t){ 24, 32 };   break;
+    case POS_SAVE_2:  pos = (v2_t){ 24, 64 };   break;
+    case POS_SAVE_3:  pos = (v2_t){ 24, 96 };   break;
+    case POS_COPY:    pos = (v2_t){ 16, 128 };  break;
+    case POS_ERASE:   pos = (v2_t){ 72, 128 };  break;
+    case POS_END:     pos = (v2_t){ 136, 128 }; break;
     default: return;
   }
   DrawRectangle(pos.x, pos.y, size.x, size.y,c);

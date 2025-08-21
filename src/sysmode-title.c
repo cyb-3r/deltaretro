@@ -1,6 +1,4 @@
-#include "sysmode/title.h"
-#include "raylib.h"
-#include "system.h"
+#include "sysmode-title.h"
 #include "ui.h"
 
 #define START_PROMPT    "PRESS  START"
@@ -24,11 +22,6 @@ void mode_title_draw(sys_t *sys) {
     ClearBackground(bg_color);
     draw_text(START_PROMPT, START_PROMPT_X, START_PROMPT_Y);
   EndTextureMode();
-
-  BeginDrawing();
-    ClearBackground(bg_color);
-    surf_draw(&sys->surf_main.texture, 0, 0, sys->cfg.window_scale);
-  EndDrawing();
 }
 
 void mode_title_end(sys_t *sys) {

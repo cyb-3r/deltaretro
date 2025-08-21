@@ -1,7 +1,7 @@
 #ifndef SYSMODE_FILE_H
 #define SYSMODE_FILE_H
 
-#include "../system.h"
+#include "system.h"
 
 void mode_file_begin(sys_t*);
 void mode_file_update(sys_t*);

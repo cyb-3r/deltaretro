@@ -7,9 +7,6 @@
 #include "input.h"
 #include "game.h"
 
-#define W_WIDTH   192
-#define W_HEIGHT  144
-
 typedef struct window {
   u32 width;
   u32 height;
@@ -45,8 +42,8 @@ bool system_init(sys_t*);
 void system_deinit(sys_t*);
 void system_update(sys_t*);
 
-bool system_change_state(sys_t*, int next_state);
-void system_panic(sys_t*)__attribute__((unused));
+bool system_change_state(sys_t*, i8 next_state);
+void system_exit(sys_t*);
 
 void surf_draw(Texture*, i32 x, i32 y, i32 scale);
 

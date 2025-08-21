@@ -1,9 +1,10 @@
 #include "system.h"
 #include "raylib.h"
-#include "types.h"
 #include "ui.h"
-#include "save.h"
 
+
+#define W_WIDTH   192
+#define W_HEIGHT  144
 #define GAME_FPS  30
 #define CFG_PATH  "./config.toml"
 
@@ -34,9 +35,6 @@ bool system_init(sys_t *self) {
   InitWindow(win_get_w(&self->window), win_get_h(&self->window), TITLE);
   SetTargetFPS(self->window.fps);
 
-  bool sd_ok = sf_init();
-  if (!sd_ok) TraceLog(LOG_ERROR, "Save system is broken :(");
-
   #ifdef DEBUG
   SetExitKey(KEY_BACKSPACE);
   #else
@@ -63,11 +61,15 @@ void system_update(sys_t *self) {
   input_update(&self->inputs);
 }
 
-bool system_change_state(sys_t *self, int next_state) {
+bool system_change_state(sys_t *self, i8 next_state) {
   if (!self || next_state > SYS_EXIT) return false;
   self->next_state = next_state;
   self->changing_state = true;
   return true;
+}
+
+void system_exit(sys_t *self) {
+  system_change_state(self, SYS_EXIT);
 }
 
 void surf_draw(tex_t *self, i32 x, i32 y, i32 scale) {

@@ -40,9 +40,6 @@ void plr_mvmt(game_t *self, ipt_t *ipt) {
   plr->xsp = (plr->state == MOVING) ? ((right - left) * ENT_SPD) : 0;
   plr->ysp = (plr->state == MOVING) ? ((down - up) * ENT_SPD) : 0;
 
-  TraceLog(LOG_DEBUG, "Player x speed = %f", plr->xsp);
-  TraceLog(LOG_DEBUG, "Player x pox   = %f", plr->x);
-
   if (scr_collision(&self->world.cur_scr,
     (plr->x + plr->xsp) / TILE_SIZE,
     plr->y / TILE_SIZE)
