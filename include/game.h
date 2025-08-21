@@ -21,6 +21,7 @@ typedef struct game {
   f32 delta;
   plrd_t plr_data;
   ent_t player;
+  wld_t world;
 } game_t;
 
 void game_init(game_t*);

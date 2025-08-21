@@ -1,9 +1,9 @@
+#include <stdio.h>
 #include "raylib.h"
 #include "save.h"
-#include <stdio.h>
 
 #define ITEM_AMOUNT 8
-#define SAVE_LOC "save.bin"
+#define SAVE_LOC "./save.bin"
 
 #define SAVE_EMPTY ((sd_t){"Kris", 0, 0})
 

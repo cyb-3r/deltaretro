@@ -10,6 +10,7 @@ BIN     := program
 I_PATH  := include
 L_PATH  := lib
 B_PATH  := bin
+ASSETS  := resources
 
 DIR_DEBUG 	:= ${B_PATH}/debug
 DIR_RELEASE := ${B_PATH}/release
@@ -35,6 +36,7 @@ release: ${OBJECTS} | ${DIR_RELEASE}
 
 debug: ${OBJECTS} | ${DIR_DEBUG}
 	${CC} ${CFLAGS} ${OBJECTS} -o ${DBG} ${DPCS}
+	cp -r ${ASSETS} config.toml ${DIR_DEBUG}/
 
 clean:
 	${RM} -r ${OBJECTS} ${DIR_DEBUG}/* ${DIR_RELEASE}/*

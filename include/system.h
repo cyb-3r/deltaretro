@@ -31,6 +31,8 @@ enum sys_state {
 typedef struct system {
   win_t window;
   u8 state;
+  u8 next_state;
+  bool changing_state;
   u8 save_slot;
   config_t cfg;
   input_t inputs;
@@ -43,11 +45,9 @@ bool system_init(sys_t*);
 void system_deinit(sys_t*);
 void system_update(sys_t*);
 
-void surf_draw(Texture*, i32 x, i32 y, i32 scale);
+bool system_change_state(sys_t*, int next_state);
+void system_panic(sys_t*)__attribute__((unused));
 
-void title_scr(sys_t*);
-void main_menu(sys_t*);
-void test_loop(sys_t*);
-void wld_select(sys_t*);
+void surf_draw(Texture*, i32 x, i32 y, i32 scale);
 
 #endif // SYS_H

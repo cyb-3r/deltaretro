@@ -5,7 +5,6 @@
 #include "types.h"
 
 #define ENT_SIZE 16
-#define ENT_SPD 1.0f
 
 enum ent_directions {
   ENT_DIR_D,
@@ -39,6 +38,6 @@ v2_t ent_get_spd(ent_t*);
 rec_t ent_rect(ent_t*);
 rec_t ent_coll(ent_t*);
 
-void ent_apply_spd(ent_t*);
+void ent_apply_spd(ent_t*, f32 delta);
 
 #endif // ENTITY_H

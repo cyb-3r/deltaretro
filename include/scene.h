@@ -22,12 +22,24 @@
 #define WORLD_HEIGHT 0x10
 #define WLD_SIZE 0x18
 
+enum tile_type {
+  TTP_NIL,
+
+  TTP_SOLID,
+  TTP_PUSH,
+  TTP_SAVE,
+
+  TTP_COUNT
+};
+
 typedef struct screen {
-  u8  tilemap[SCR_T_W][SCR_T_H];
-  u16 collision[SCR_COLL_MAX];
-  u8  exits[4];
+  u8 tilemap[SCR_T_W][SCR_T_H];
+  u8 tile_type[SCR_T_W][SCR_T_H];
+  u8 exits[4];
 } screen_t;
 typedef struct screen scr_t;
+
+bool scr_collision(scr_t *self, int x, int y);
 
 typedef struct world {
   char   path[256];
