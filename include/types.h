@@ -11,7 +11,7 @@
 #define ERRVAL -1
 #endif // ERRVAL
 
-/*== Types alias ==*/
+/*== Type aliases ==*/
 typedef uint8_t   u8;
 typedef uint16_t  u16;
 typedef uint32_t  u32;
@@ -28,7 +28,7 @@ typedef double    f64;
 typedef size_t    usize;
 typedef ptrdiff_t isize;
 
-/*== Raylib types alias ==*/
+/*== Raylib type aliases ==*/
 typedef struct Vector2        v2_t;
 typedef struct Vector3        v3_t;
 typedef struct Vector4        v4_t;
