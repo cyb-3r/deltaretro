@@ -13,6 +13,8 @@ enum exit_code {
 };
 
 void begin(sys_t*);
+void update(sys_t*);
+void draw(sys_t*);
 void end(sys_t*);
 
 int main(void) {
@@ -29,36 +31,9 @@ int main(void) {
   }
 
   while ((sys.state != SYS_EXIT) && !WindowShouldClose()) {
-    /*== Begin state ==*/
     begin(&sys);
-
-    system_update(&sys);
-
-    /*== Update logic ==*/
-    switch(sys.state) {
-      case SYS_TITLE: mode_title_update(&sys); break;
-      case SYS_MENU:  mode_file_update(&sys); break;
-      case SYS_TEST:  mode_game_update(&sys); break;
-
-      default:
-      TraceLog(LOG_FATAL, "Undefined system state %d", sys.state);
-      system_change_state(&sys, SYS_EXIT);
-      break;
-    }
-
-    /*== Draw to screen ==*/
-    switch(sys.state) {
-      case SYS_TITLE: mode_title_draw(&sys); break;
-      case SYS_MENU:  mode_file_draw(&sys); break;
-      case SYS_TEST:  mode_game_draw(&sys); break;
-
-      default:
-      TraceLog(LOG_FATAL, "Undefined system state %d", sys.state);
-      system_change_state(&sys, SYS_EXIT);
-      break;
-    }
-
-    /*== End state ==*/
+    update(&sys);
+    draw(&sys);
     end(&sys);
   }
 
@@ -79,6 +54,33 @@ void begin(sys_t *sys) {
     break;
   }
   sys->changing_state = false;
+}
+
+void update(sys_t *sys) {
+  system_update(sys);
+  switch(sys->state) {
+    case SYS_TITLE: mode_title_update(sys); break;
+    case SYS_MENU:  mode_file_update(sys); break;
+    case SYS_TEST:  mode_game_update(sys); break;
+
+    default:
+    TraceLog(LOG_FATAL, "Undefined system state %d", sys->state);
+    system_change_state(sys, SYS_EXIT);
+    break;
+  }
+}
+
+void draw(sys_t *sys) {
+  switch(sys->state) {
+    case SYS_TITLE: mode_title_draw(sys); break;
+    case SYS_MENU:  mode_file_draw(sys); break;
+    case SYS_TEST:  mode_game_draw(sys); break;
+
+    default:
+    TraceLog(LOG_FATAL, "Undefined system state %d", sys->state);
+    system_change_state(sys, SYS_EXIT);
+    break;
+  }
 }
 
 void end(sys_t *sys) {

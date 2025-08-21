@@ -1,16 +1,17 @@
 #ifndef TYPES_H
 #define TYPES_H
 
-#define EMPTY { 0 }
-
-#ifndef ERRVAL
-#define ERRVAL -1
-#endif // ERRVAL
-
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
 
+/*== Constants ==*/
+#define EMPTY { 0 }
+#ifndef ERRVAL
+#define ERRVAL -1
+#endif // ERRVAL
+
+/*== Types alias ==*/
 typedef uint8_t   u8;
 typedef uint16_t  u16;
 typedef uint32_t  u32;
@@ -27,9 +28,14 @@ typedef double    f64;
 typedef size_t    usize;
 typedef ptrdiff_t isize;
 
-typedef struct Vector2   v2_t;
-typedef struct Vector3   v3_t;
-typedef struct Vector4   v4_t;
-typedef struct Rectangle rec_t;
+/*== Raylib types alias ==*/
+typedef struct Vector2        v2_t;
+typedef struct Vector3        v3_t;
+typedef struct Vector4        v4_t;
+typedef struct Color          col_t;
+typedef struct Rectangle      rec_t;
+typedef struct Image          img_t;
+typedef struct Texture        tex_t;
+typedef struct RenderTexture  rtex_t;
 
 #endif // TYPES_H

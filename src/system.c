@@ -1,5 +1,6 @@
 #include "system.h"
 #include "raylib.h"
+#include "types.h"
 #include "ui.h"
 #include "save.h"
 
@@ -8,9 +9,6 @@
 
 u32 win_get_w(win_t*);
 u32 win_get_h(win_t*);
-void draw_cursor(int select);
-void sd_draw(sd_t*, int y);
-void hud_draw(const char *name, int pts);
 
 u32 win_get_w(win_t *self) {
   return self->width * self->scale;
@@ -43,7 +41,8 @@ bool system_init(sys_t *self) {
   SetExitKey(KEY_BACKSPACE);
   #else
   SetExitKey(KEY_NULL);
-  #endif // DEBUG EXIT
+  #endif // DEBUG EXIT KEY
+
   ui_init();
   self->surf_main = LoadRenderTexture(W_WIDTH, W_HEIGHT);
   self->inputs = inputs_default();
@@ -71,7 +70,7 @@ bool system_change_state(sys_t *self, int next_state) {
   return true;
 }
 
-void surf_draw(Texture *self, i32 x, i32 y, i32 scale) {
+void surf_draw(tex_t *self, i32 x, i32 y, i32 scale) {
   DrawTexturePro(
     *self,
     (rec_t){ 0, 0, self->width, -(self->height) },

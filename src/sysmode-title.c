@@ -7,8 +7,6 @@
 #define START_PROMPT_X  48
 #define START_PROMPT_Y  112
 
-const Color bg_color = { 0x42, 0x45, 0xE5, 0xFF };
-
 void mode_title_begin(sys_t *sys) {
   TraceLog(LOG_INFO, "Entering TITLE");
 }
@@ -21,6 +19,7 @@ void mode_title_update(sys_t *sys) {
 }
 
 void mode_title_draw(sys_t *sys) {
+  const col_t bg_color = { 0x42, 0x45, 0xE5, 0xFF };
   BeginTextureMode(sys->surf_main);
     ClearBackground(bg_color);
     draw_text(START_PROMPT, START_PROMPT_X, START_PROMPT_Y);
