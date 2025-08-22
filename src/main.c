@@ -2,9 +2,13 @@
 
 #include "raylib.h"
 
-#include "sysmode-title.h"
-#include "sysmode-file.h"
-#include "sysmode-game.h"
+#ifdef DEBUG
+#include "debug.h"
+#endif
+
+#include "stage-title.h"
+#include "stage-file.h"
+#include "stage-game.h"
 
 enum exit_code {
   ERR = -1,
@@ -18,11 +22,12 @@ void end(sys_t*);
 
 int main(void) {
   #ifdef DEBUG
-    SetTraceLogLevel(LOG_DEBUG);
-    TraceLog(LOG_DEBUG, "Debug mode is ON");
+  SetTraceLogLevel(LOG_DEBUG);
+  TraceLog(LOG_DEBUG, "Debug mode is ON");
+  dbg_t debug = { 0 };
   #endif
 
-  sys_t sys = EMPTY;
+  sys_t sys =   { 0 };
   const bool ok = system_init(&sys);
   if (!ok) {
     TraceLog(LOG_FATAL, "Failed to init system");
@@ -31,7 +36,15 @@ int main(void) {
 
   while ((sys.state != SYS_EXIT) && !WindowShouldClose()) {
     begin(&sys);
+
+    #ifdef DEBUG
+    dbg_step(&debug);
+    if (!debug.pause) update(&sys);
+    else { if (debug.frmskp) update(&sys); }
+    #else
     update(&sys);
+    #endif
+
     draw(&sys);
     end(&sys);
   }
@@ -43,9 +56,9 @@ int main(void) {
 void begin(sys_t *sys) {
   if (!sys->changing_state) return;
   switch(sys->state) {
-    case SYS_TITLE: mode_title_begin(sys); break;
-    case SYS_MENU:  mode_file_begin(sys); break;
-    case SYS_TEST:  mode_game_begin(sys); break;
+    case SYS_TITLE: stage_title_begin(sys); break;
+    case SYS_MENU:  stage_file_begin(sys); break;
+    case SYS_TEST:  stage_game_begin(sys); break;
 
     default:
     TraceLog(LOG_FATAL, "Undefined system state %d", sys->state);
@@ -59,9 +72,9 @@ void update(sys_t *sys) {
   if (sys->changing_state) return;
   system_update(sys);
   switch(sys->state) {
-    case SYS_TITLE: mode_title_update(sys); break;
-    case SYS_MENU:  mode_file_update(sys); break;
-    case SYS_TEST:  mode_game_update(sys); break;
+    case SYS_TITLE: stage_title_update(sys); break;
+    case SYS_MENU:  stage_file_update(sys); break;
+    case SYS_TEST:  stage_game_update(sys); break;
 
     default:
     TraceLog(LOG_FATAL, "Undefined system state %d", sys->state);
@@ -73,9 +86,9 @@ void update(sys_t *sys) {
 void draw(sys_t *sys) {
   if (sys->changing_state) return;
   switch(sys->state) {
-    case SYS_TITLE: mode_title_draw(sys); break;
-    case SYS_MENU:  mode_file_draw(sys); break;
-    case SYS_TEST:  mode_game_draw(sys); break;
+    case SYS_TITLE: stage_title_draw(sys); break;
+    case SYS_MENU:  stage_file_draw(sys); break;
+    case SYS_TEST:  stage_game_draw(sys); break;
 
     default:
     TraceLog(LOG_FATAL, "Undefined system state %d", sys->state);
@@ -92,9 +105,9 @@ void draw(sys_t *sys) {
 void end(sys_t *sys) {
   if (!sys->changing_state) return;
   switch(sys->state) {
-    case SYS_TITLE: mode_title_end(sys); break;
-    case SYS_MENU:  mode_file_end(sys); break;
-    case SYS_TEST:  mode_game_end(sys); break;
+    case SYS_TITLE: stage_title_end(sys); break;
+    case SYS_MENU:  stage_file_end(sys); break;
+    case SYS_TEST:  stage_game_end(sys); break;
 
     default:
     TraceLog(LOG_FATAL, "Undefined system state %d", sys->state);

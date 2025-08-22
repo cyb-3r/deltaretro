@@ -1,4 +1,4 @@
-#include "sysmode-file.h"
+#include "stage-file.h"
 #include "ui.h"
 #include "save.h"
 
@@ -20,7 +20,7 @@ static tex_t  s_bg;
 static i8     s_select;
 static sd_t   s_save_data[SAVE_MAX];
 
-void mode_file_begin(sys_t *sys) {
+void stage_file_begin(sys_t *sys) {
   TraceLog(LOG_INFO, "Entering MENU");
 
   s_select = 0;
@@ -36,7 +36,7 @@ void mode_file_begin(sys_t *sys) {
     sd_load(&s_save_data[i], (i + 1));
 }
 
-void mode_file_update(sys_t *sys) {
+void stage_file_update(sys_t *sys) {
   if (input_is_pressed(&sys->inputs, INPUT_PRIM)) {
     if (s_select < POS_COPY) {
       sys->save_slot = s_select + 1;
@@ -58,22 +58,26 @@ void mode_file_update(sys_t *sys) {
     s_select = (s_select + 1) % 6;
 }
 
-void mode_file_draw(sys_t *sys) {
+void stage_file_draw(sys_t *sys) {
   BeginTextureMode(sys->surf_main);
     ClearBackground(BLACK);
     DrawTexture(s_bg, 0, 0, WHITE);
-    draw_text("FILE SELECT", 16, 8);
+    draw_text("FILE SELECT", UI_UNIT_N(2), UI_UNIT);
     draw_cursor(s_select);
-    const i8 y_off = 32;
+    const i8 y_off = UI_UNIT_N(4);
     for (i8 i = 0; i < SAVE_MAX; i++) {
-      const i16 loop_off = i * (4 * 8);
+      const i16 loop_off = i * y_off;
       sd_draw(&s_save_data[i], y_off + loop_off);
     }
-    draw_text("COPY   ERASE   END", 24, win_get_h(&sys->window) - 16);
+    draw_text(
+      "COPY   ERASE   END",
+      UI_UNIT_N(3),
+      sys->window.height - UI_UNIT_N(2)
+    );
   EndTextureMode();
 }
 
-void mode_file_end(sys_t *sys) {
+void stage_file_end(sys_t *sys) {
   TraceLog(LOG_INFO, "Exiting MENU");
   UnloadTexture(s_bg);
 }

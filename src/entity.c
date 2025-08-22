@@ -1,8 +1,8 @@
 #include "entity.h"
 
-void ent_apply_spd(ent_t *self, f32 delta) {
-  self->x += self->xsp * delta;
-  self->y += self->ysp * delta;
+void ent_apply_spd(ent_t *self) {
+  self->x += self->xsp;
+  self->y += self->ysp;
 }
 
 rec_t ent_rect(ent_t *self) {

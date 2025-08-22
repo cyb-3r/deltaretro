@@ -1,4 +1,5 @@
 #include "game.h"
+#include "entity.h"
 #include "player.h"
 #include "raylib.h"
 #include "scene.h"
@@ -6,7 +7,19 @@
 #define W_WIDTH 256
 #define W_HEIGHT 224
 #define HUD_HEIGHT 32
-#define ENT_SPD 30.0f
+#define ENT_SPD 60.00f
+
+struct dirs_input {
+  bool down;
+  bool right;
+  bool up;
+  bool left;
+};
+
+/*== Utils ==*/
+void plr_process_coll(ent_t*, scr_t*);
+void plr_process_dirs(ent_t*, struct dirs_input);
+void apply_delta(ent_t*, f32);
 
 void game_init(game_t *self) {
   self->player.life_max = 20;
@@ -24,36 +37,24 @@ bool will_collide(f32 x, f32 y, scr_t *data) {
   return scr_collision(data, (x / TILE_SIZE), (y / TILE_SIZE));
 }
 
-void plr_mvmt(game_t *self, ipt_t *ipt) {
-  ent_t *plr = &self->player;
+void plr_mvmt(ent_t *plr, ipt_t *ipt) {
+  struct dirs_input dirs = {
+    input_is_down(ipt, INPUT_DOWN),
+    input_is_down(ipt, INPUT_RIGHT),
+    input_is_down(ipt, INPUT_UP),
+    input_is_down(ipt, INPUT_LEFT),
+  };
 
-  bool
-  left =    input_is_down(ipt, INPUT_LEFT),
-  right =   input_is_down(ipt, INPUT_RIGHT),
-  up =      input_is_down(ipt, INPUT_UP),
-  down =    input_is_down(ipt, INPUT_DOWN);
+  if ((dirs.down | dirs.right | dirs.up | dirs.left) == 0) {
+    plr->state = PLR_IDLE;
+  } else plr->state = PLR_MOVING;
 
-  if (!left && !right && !up && !down) {
-    plr->state = IDLE;
-  } else plr->state = MOVING;
+  plr->xsp = (plr->state == PLR_MOVING) ?
+    ((dirs.right - dirs.left) * ENT_SPD) : 0;
+  plr->ysp = (plr->state == PLR_MOVING) ?
+    ((dirs.down - dirs.up) * ENT_SPD) : 0;
 
-  plr->xsp = (plr->state == MOVING) ? ((right - left) * ENT_SPD) : 0;
-  plr->ysp = (plr->state == MOVING) ? ((down - up) * ENT_SPD) : 0;
-
-  if (scr_collision(&self->world.cur_scr,
-    (plr->x + plr->xsp) / TILE_SIZE,
-    plr->y / TILE_SIZE)
-  ) plr->xsp = 0;
-
-  if (scr_collision(&self->world.cur_scr,
-    plr->x / TILE_SIZE,
-    (plr->y + plr->ysp) / TILE_SIZE)
-  ) plr->ysp = 0;
-
-  if (right)  plr->facing = ENT_DIR_R;
-  if (left)   plr->facing = ENT_DIR_L;
-  if (down)   plr->facing = ENT_DIR_D;
-  if (up)     plr->facing = ENT_DIR_U;
+  plr_process_dirs(plr, dirs);
 }
 
 void plr_update()__attribute__((unused));
@@ -62,11 +63,40 @@ void game_update(game_t *self, ipt_t *ipt) {
   update_delta(self);
   // TraceLog(LOG_DEBUG, "Delta Time: %f", self->delta);
 
-  plr_mvmt(self, ipt);
-  ent_apply_spd(&self->player, self->delta);
+  plr_mvmt(&self->player, ipt);
+  apply_delta(&self->player, self->delta);
+  plr_process_coll(&self->player, &self->world.cur_scr);
+  ent_apply_spd(&self->player);
 }
 
 void game_draw(game_t *self) {
   DrawRectangleRec(ent_rect(&self->player), BLUE);
   DrawRectangleRec(ent_coll(&self->player), RED);
+}
+
+void plr_process_coll(ent_t *self, scr_t *data) {
+  /*== Collisions WIP ==*/
+  if (scr_collision(data,
+    (self->x + self->xsp) / TILE_SIZE,
+    self->y / TILE_SIZE)
+  ) self->xsp = 0;
+
+  if (scr_collision(data,
+    self->x / TILE_SIZE,
+    (self->y + self->ysp) / TILE_SIZE)
+  ) self->ysp = 0;
+}
+
+void plr_process_dirs(ent_t *self, struct dirs_input dirs) {
+  if (!self) return;
+  if (dirs.right)  self->facing = ENT_DIR_R;
+  if (dirs.left)   self->facing = ENT_DIR_L;
+  if (dirs.down)   self->facing = ENT_DIR_D;
+  if (dirs.up)     self->facing = ENT_DIR_U;
+}
+
+void apply_delta(ent_t *self, f32 delta) {
+  if (!self) return;
+  self->xsp *= delta;
+  self->ysp *= delta;
 }

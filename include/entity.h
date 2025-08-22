@@ -38,6 +38,6 @@ v2_t ent_get_spd(ent_t*);
 rec_t ent_rect(ent_t*);
 rec_t ent_coll(ent_t*);
 
-void ent_apply_spd(ent_t*, f32 delta);
+void ent_apply_spd(ent_t*);
 
 #endif // ENTITY_H
