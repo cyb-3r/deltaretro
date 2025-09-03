@@ -9,17 +9,27 @@
 	},
 	"build_systems": [
 		{
-			"name": "Debug Build",
+			"name": "Debug build",
 			"cmd": ["make", "debug"],
 			"working_dir": "$project_path"
 		},
 		{
-			"name": "Debug Run",
+			"name": "Debug clean and build",
+			"cmd": ["make", "clean", "debug"],
+			"working_dir": "$project_path"
+		},
+		{
+			"name": "Debug run",
 			"cmd": ["bin/debug/program"],
 			"working_dir": "$project_path"
 		},
 		{
-			"name": "Release",
+			"name": "Clean output",
+			"cmd": ["make", "clean"],
+			"working_dir": "$project_path"
+		},
+		{
+			"name": "Release build",
 			"cmd": ["make", "release"],
 			"working_dir": "$project_path"
 		}
