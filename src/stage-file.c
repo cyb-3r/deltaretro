@@ -1,4 +1,5 @@
 #include "stage-file.h"
+#include "types.h"
 #include "ui.h"
 #include "save.h"
 
@@ -15,16 +16,18 @@ enum cursor_pos {
   POS_END,
 };
 
-/*== Local vars ==*/
-static tex_t  s_bg;
-static i8     s_select;
-static sd_t   s_save_data[SAVE_MAX];
+struct state_file_select {
+  tex_t background;
+  i8    select;
+  sd_t  save_data[SAVE_MAX];
+};
 
 void stage_file_begin(sys_t *sys) {
   TraceLog(LOG_INFO, "Entering MENU");
 
-  s_select = 0;
-  s_bg = LoadTexture("resources/gfx/bg-save.png");
+  system_flush_temp(sys);
+  struct state_file_select *state = (struct state_file_select*)sys->temp;
+  state->background = LoadTexture("resources/gfx/bg-save.png");
 
   bool sd_ok = sf_init();
   if (!sd_ok) {
@@ -33,18 +36,21 @@ void stage_file_begin(sys_t *sys) {
   }
 
   for (i8 i = 0; i < SAVE_MAX; i++)
-    sd_load(&s_save_data[i], (i + 1));
+    sd_load(&state->save_data[i], (i + 1));
 }
 
 void stage_file_update(sys_t *sys) {
+  struct state_file_select *state = (struct state_file_select*)sys->temp;
+
   if (input_is_pressed(&sys->inputs, INPUT_PRIM)) {
-    if (s_select < POS_COPY) {
-      sys->save_slot = s_select + 1;
+    if (state->select < POS_COPY) {
+      sys->save_slot = state->select + 1;
 
       for (int i = 0; i < SAVE_NAME_LEN; i++)
-        sys->game.plr_data.name[i] = s_save_data[s_select].name[i];
-      sys->game.plr_data.pts = s_save_data[s_select].points;
-      sys->game.plr_data.lv = s_save_data[s_select].lv;
+        sys->game.plr_data.name[i] = state->save_data[state->select].name[i];
+
+      sys->game.plr_data.pts = state->save_data[state->select].points;
+      sys->game.plr_data.lv = state->save_data[state->select].lv;
 
       system_change_state(sys, SYS_TEST);
       return;
@@ -55,19 +61,21 @@ void stage_file_update(sys_t *sys) {
   }
 
   if (input_is_pressed(&sys->inputs, INPUT_MENU))
-    s_select = (s_select + 1) % 6;
+    state->select = (state->select + 1) % 6;
 }
 
 void stage_file_draw(sys_t *sys) {
-  BeginTextureMode(sys->surf_main);
+  struct state_file_select *state = (struct state_file_select*)sys->temp;
+
+  BeginTextureMode(sys->surface);
     ClearBackground(BLACK);
-    DrawTexture(s_bg, 0, 0, WHITE);
+    DrawTexture(state->background, 0, 0, WHITE);
     draw_text("FILE SELECT", UI_UNIT_N(2), UI_UNIT);
-    draw_cursor(s_select);
+    draw_cursor(state->select);
     const i8 y_off = UI_UNIT_N(4);
     for (i8 i = 0; i < SAVE_MAX; i++) {
       const i16 loop_off = i * y_off;
-      sd_draw(&s_save_data[i], y_off + loop_off);
+      sd_draw(&state->save_data[i], y_off + loop_off);
     }
     draw_text(
       "COPY   ERASE   END",
@@ -78,8 +86,10 @@ void stage_file_draw(sys_t *sys) {
 }
 
 void stage_file_end(sys_t *sys) {
+  struct state_file_select *state = (struct state_file_select*)sys->temp;
+
   TraceLog(LOG_INFO, "Exiting MENU");
-  UnloadTexture(s_bg);
+  UnloadTexture(state->background);
 }
 
 /*== Utils impl ==*/

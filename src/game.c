@@ -28,10 +28,6 @@ void game_init(game_t *self) {
   self->player.y = (((f32)W_HEIGHT - (f32)HUD_HEIGHT) / 2.0f) - 8.0f;
 }
 
-void update_delta(game_t *self) {
-  self->delta = GetFrameTime();
-}
-
 bool will_collide(f32 x, f32 y, scr_t *data) {
   if (!data) return false;
   return scr_collision(data, (x / TILE_SIZE), (y / TILE_SIZE));
@@ -59,12 +55,9 @@ void plr_mvmt(ent_t *plr, ipt_t *ipt) {
 
 void plr_update()__attribute__((unused));
 
-void game_update(game_t *self, ipt_t *ipt) {
-  update_delta(self);
-  // TraceLog(LOG_DEBUG, "Delta Time: %f", self->delta);
-
+void game_update(game_t *self, ipt_t *ipt, f32 delta) {
   plr_mvmt(&self->player, ipt);
-  apply_delta(&self->player, self->delta);
+  apply_delta(&self->player, delta);
   plr_process_coll(&self->player, &self->world.cur_scr);
   ent_apply_spd(&self->player);
 }

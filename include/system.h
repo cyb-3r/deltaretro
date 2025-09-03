@@ -22,19 +22,24 @@ enum sys_state {
   SYS_TITLE,
   SYS_MENU,
   SYS_TEST,
+  SYS_SETTINGS,
   SYS_EXIT
 };
 
 typedef struct system {
-  win_t window;
-  u8 state;
-  u8 next_state;
-  bool changing_state;
-  u8 save_slot;
-  config_t cfg;
-  input_t inputs;
-  game_t game;
-  RenderTexture surf_main;
+  /* data */
+  u8    state;
+  u8    next_state;
+  u8    save_slot;
+  f32   delta;
+  void *temp; /* this stores temporary data */
+
+  /* structs */
+  win_t     window;
+  config_t  config;
+  ipt_t     inputs;
+  game_t    game; /* might move that into temp */
+  rtex_t    surface;
 } system_t;
 typedef struct system sys_t;
 
@@ -42,9 +47,12 @@ bool system_init(sys_t*);
 void system_deinit(sys_t*);
 void system_update(sys_t*);
 
+void system_flush_temp(sys_t*);
+bool system_changing_state(sys_t*);
+
 bool system_change_state(sys_t*, i8 next_state);
 void system_exit(sys_t*);
 
 void surf_draw(Texture*, i32 x, i32 y, i32 scale);
 
-#endif // SYS_H
+#endif /* SYS_H */

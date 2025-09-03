@@ -18,7 +18,7 @@ void stage_title_update(sys_t *sys) {
 
 void stage_title_draw(sys_t *sys) {
   const col_t bg_color = { 0x42, 0x45, 0xE5, 0xFF };
-  BeginTextureMode(sys->surf_main);
+  BeginTextureMode(sys->surface);
     ClearBackground(bg_color);
     draw_text(START_PROMPT, START_PROMPT_X, START_PROMPT_Y);
   EndTextureMode();

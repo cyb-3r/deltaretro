@@ -37,11 +37,11 @@ int main(void) {
   while ((sys.state != SYS_EXIT) && !WindowShouldClose()) {
     begin(&sys);
 
-    #ifdef DEBUG
+    #ifdef DEBUG  /* debug pausing allowed */
     dbg_step(&debug);
     if (!debug.pause) update(&sys);
     else { if (debug.frmskp) update(&sys); }
-    #else
+    #else         /* normal update */
     update(&sys);
     #endif
 
@@ -54,7 +54,9 @@ int main(void) {
 }
 
 void begin(sys_t *sys) {
-  if (!sys->changing_state) return;
+  if (!system_changing_state(sys)) return;
+  sys->state = sys->next_state;
+
   switch(sys->state) {
     case SYS_TITLE: stage_title_begin(sys); break;
     case SYS_MENU:  stage_file_begin(sys); break;
@@ -65,11 +67,11 @@ void begin(sys_t *sys) {
     system_change_state(sys, SYS_EXIT);
     break;
   }
-  sys->changing_state = false;
 }
 
 void update(sys_t *sys) {
-  if (sys->changing_state) return;
+  if (system_changing_state(sys)) return;
+
   system_update(sys);
   switch(sys->state) {
     case SYS_TITLE: stage_title_update(sys); break;
@@ -84,7 +86,8 @@ void update(sys_t *sys) {
 }
 
 void draw(sys_t *sys) {
-  if (sys->changing_state) return;
+  if (system_changing_state(sys)) return;
+
   switch(sys->state) {
     case SYS_TITLE: stage_title_draw(sys); break;
     case SYS_MENU:  stage_file_draw(sys); break;
@@ -98,12 +101,13 @@ void draw(sys_t *sys) {
 
   BeginDrawing();
     ClearBackground(BLACK);
-    surf_draw(&sys->surf_main.texture, 0, 0, sys->cfg.window_scale);
+    surf_draw(&sys->surface.texture, 0, 0, sys->config.window_scale);
   EndDrawing();
 }
 
 void end(sys_t *sys) {
-  if (!sys->changing_state) return;
+  if (!system_changing_state(sys)) return;
+
   switch(sys->state) {
     case SYS_TITLE: stage_title_end(sys); break;
     case SYS_MENU:  stage_file_end(sys); break;
@@ -114,5 +118,4 @@ void end(sys_t *sys) {
     system_change_state(sys, SYS_EXIT);
     break;
   }
-  sys->state = sys->next_state;
 }
