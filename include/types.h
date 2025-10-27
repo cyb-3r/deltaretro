@@ -25,8 +25,9 @@ typedef int64_t   i64;
 typedef float     f32;
 typedef double    f64;
 
+typedef uint8_t   byte;
+
 typedef size_t    usize;
-typedef ptrdiff_t isize;
 
 /*== Raylib type aliases ==*/
 typedef struct Vector2        v2_t;

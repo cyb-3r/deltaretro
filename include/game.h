@@ -18,12 +18,15 @@ typedef struct plr_data {
 typedef struct plr_data plrd_t;
 
 typedef struct game {
+  u32 width;
+  u32 height;
+
   plrd_t plr_data;
   ent_t  player;
   wld_t  world;
 } game_t;
 
-void game_init(game_t*);
+void game_init(game_t*, u32 width, u32 height);
 void game_update(game_t*, ipt_t*, f32 delta);
 void game_draw(game_t*);
 

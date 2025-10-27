@@ -9,7 +9,6 @@ typedef enum tile_size {
   TILE_SIZE_NORMAL = 16
 } tile_size_t;
 
-// tileset file can be 2048 * 2048 px max
 typedef struct tileset {
   Texture2D texture;
   u16 tile_width, tile_height;
@@ -22,14 +21,13 @@ void tileset_draw_tile(tileset_t *self, u32 tile_id, Vector2 pos);
 void tileset_unload(tileset_t self);
 
 typedef struct tilemap {
-  tileset_t *set;
   u16 width, height;
-  u32 *tiles;
+  u16 *tiles;
 } tilemap_t;
 typedef struct tilemap tlmp_t;
 
-void tilemap_init(tilemap_t *self, tileset_t *set, u16 width, u16 height);
-void tilemap_render(tilemap_t *self, Vector2 pos);
+void tilemap_init(tilemap_t*, u16 width, u16 height);
+void tilemap_render(tilemap_t*, tileset_t*, Vector2 pos);
 void tilemap_deinit(tilemap_t *self);
 
 #endif

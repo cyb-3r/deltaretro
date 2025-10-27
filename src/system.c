@@ -66,7 +66,7 @@ bool system_init(sys_t *self) {
   self->surface = LoadRenderTexture(W_WIDTH, W_HEIGHT);
   self->inputs = inputs_default();
   input_load(&(self->inputs));
-  game_init(&self->game);
+  game_init(&self->game, W_WIDTH, W_HEIGHT);
 
   return true;
 }

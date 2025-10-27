@@ -1,11 +1,7 @@
 #include "game.h"
-#include "entity.h"
 #include "player.h"
 #include "raylib.h"
-#include "scene.h"
 
-#define W_WIDTH 256
-#define W_HEIGHT 224
 #define HUD_HEIGHT 32
 #define ENT_SPD 60.00f
 
@@ -21,11 +17,14 @@ void plr_process_coll(ent_t*, scr_t*);
 void plr_process_dirs(ent_t*, struct dirs_input);
 void apply_delta(ent_t*, f32);
 
-void game_init(game_t *self) {
+void game_init(game_t *self, u32 width, u32 height) {
+  const u32 actual_height = height - HUD_HEIGHT;
+  self->width = width;
+  self->height = actual_height;
   self->player.life_max = 20;
   self->player.life = 20;
-  self->player.x = ((f32)W_WIDTH / 2.0f) - 8.0f;
-  self->player.y = (((f32)W_HEIGHT - (f32)HUD_HEIGHT) / 2.0f) - 8.0f;
+  self->player.x = ((f32)width / 2.0f) - 8.0f;
+  self->player.y = ((f32)actual_height / 2.0f) - 8.0f;
 }
 
 bool will_collide(f32 x, f32 y, scr_t *data) {
@@ -92,4 +91,14 @@ void apply_delta(ent_t *self, f32 delta) {
   if (!self) return;
   self->xsp *= delta;
   self->ysp *= delta;
+}
+
+void game_incpts(game_t *self, i16 amount) {
+  if (!self) return;
+  self->plr_data.pts += amount;
+}
+
+void game_setpts(game_t *self, i16 amount) {
+  if (!self) return;
+  self->plr_data.pts = amount;
 }

@@ -13,9 +13,6 @@
 #define SCR_T_W ((SCR_W) / (TILE_SIZE))
 #define SCR_T_H ((SCR_H) / (TILE_SIZE))
 
-#define COLLISION_BITS (sizeof(u16) * 8)
-#define SCR_COLL_MAX ( ((SCR_T_W) * (SCR_T_H)) / (COLLISION_BITS) )
-
 #define WLD_ENT_MAX 0x18
 
 #define WORLD_WIDTH 0x10
@@ -43,15 +40,16 @@ bool scr_collision(scr_t *self, int x, int y);
 
 typedef struct world {
   char   path[256];
+
   tlst_t theme;
   scr_t  cur_scr;
-  tlmp_t next_scr;
 
+  /*== entities ==*/
   u8   type[WLD_ENT_MAX];
   f32  x[WLD_ENT_MAX];
   f32  y[WLD_ENT_MAX];
   i32  life[WLD_ENT_MAX];
-  bool active[WLD_ENT_MAX];
+  bool free[WLD_ENT_MAX];
 } world_t;
 typedef struct world wld_t;
 

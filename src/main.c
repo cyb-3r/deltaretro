@@ -27,7 +27,7 @@ int main(void) {
   dbg_t debug = { 0 };
   #endif
 
-  sys_t sys =   { 0 };
+  sys_t sys = { 0 };
   const bool ok = system_init(&sys);
   if (!ok) {
     TraceLog(LOG_FATAL, "Failed to init system");
