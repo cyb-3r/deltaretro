@@ -1,4 +1,4 @@
-#include "stage-file.h"
+#include "file-select.h"
 #include "types.h"
 #include "ui.h"
 #include "save.h"
@@ -16,7 +16,7 @@ enum cursor_pos {
   POS_END,
 };
 
-struct state_file_select {
+struct context_file_sel {
   tex_t background;
   i8    select;
   sd_t  save_data[SAVE_MAX];
@@ -26,7 +26,7 @@ void stage_file_begin(sys_t *sys) {
   TraceLog(LOG_INFO, "Entering MENU");
 
   system_flush_temp(sys);
-  struct state_file_select *state = (struct state_file_select*)sys->temp;
+  struct context_file_sel *state = (struct context_file_sel*)sys->temp;
   state->background = LoadTexture("resources/gfx/bg-save.png");
 
   bool sd_ok = sf_init();
@@ -40,7 +40,7 @@ void stage_file_begin(sys_t *sys) {
 }
 
 void stage_file_update(sys_t *sys) {
-  struct state_file_select *state = (struct state_file_select*)sys->temp;
+  struct context_file_sel *state = (struct context_file_sel*)sys->temp;
 
   if (input_is_pressed(&sys->inputs, INPUT_PRIM)) {
     if (state->select < POS_COPY) {
@@ -52,7 +52,7 @@ void stage_file_update(sys_t *sys) {
       sys->game.plr_data.pts = state->save_data[state->select].points;
       sys->game.plr_data.lv = state->save_data[state->select].lv;
 
-      system_change_state(sys, SYS_TEST);
+      system_change_state(sys, SYS_GAME);
       return;
     } else {
       system_exit(sys);
@@ -65,7 +65,7 @@ void stage_file_update(sys_t *sys) {
 }
 
 void stage_file_draw(sys_t *sys) {
-  struct state_file_select *state = (struct state_file_select*)sys->temp;
+  struct context_file_sel *state = (struct context_file_sel*)sys->temp;
 
   BeginTextureMode(sys->surface);
     ClearBackground(BLACK);
@@ -86,7 +86,7 @@ void stage_file_draw(sys_t *sys) {
 }
 
 void stage_file_end(sys_t *sys) {
-  struct state_file_select *state = (struct state_file_select*)sys->temp;
+  struct context_file_sel *state = (struct context_file_sel*)sys->temp;
 
   TraceLog(LOG_INFO, "Exiting MENU");
   UnloadTexture(state->background);

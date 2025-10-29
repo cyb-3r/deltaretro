@@ -1,4 +1,4 @@
-#include "stage-title.h"
+#include "title-screen.h"
 #include "ui.h"
 
 #define START_PROMPT    "PRESS  START"

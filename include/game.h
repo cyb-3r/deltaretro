@@ -9,6 +9,12 @@
 #define PLR_NAME_LEN 8
 #define GAME_TLST_MAX 0x08
 
+enum game_state {
+  GAME_RUN,
+  GAME_PAUSE,
+  GAME_END
+};
+
 typedef struct plr_data {
   char name[PLR_NAME_LEN];
   i16  pts;

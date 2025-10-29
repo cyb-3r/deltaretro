@@ -29,20 +29,20 @@ enum tile_type {
   TTP_COUNT
 };
 
-typedef struct screen {
+typedef struct room {
   u8 tilemap[SCR_T_W][SCR_T_H];
   u8 tile_type[SCR_T_W][SCR_T_H];
   u8 exits[4];
 } screen_t;
-typedef struct screen scr_t;
+typedef struct room room_t;
 
-bool scr_collision(scr_t *self, int x, int y);
+bool scr_collision(room_t *self, int x, int y);
 
 typedef struct world {
   char   path[256];
 
   tlst_t theme;
-  scr_t  cur_scr;
+  room_t  cur_scr;
 
   /*== entities ==*/
   u8   type[WLD_ENT_MAX];

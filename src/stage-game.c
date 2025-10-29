@@ -5,7 +5,7 @@
 /*== Utils ==*/
 void hud_draw(const char *name, i32 pts);
 
-struct state_game {
+struct context_game {
   tex_t   background;
   rtex_t  surface;
 };
@@ -14,7 +14,7 @@ void stage_game_begin(sys_t *sys) {
   TraceLog(LOG_INFO, "Entering GAME");
 
   system_flush_temp(sys);
-  struct state_game *state = (struct state_game*)sys->temp;
+  struct context_game *state = (struct context_game*)sys->temp;
   state->background = LoadTexture("resources/gfx/tlmp-board.png");
   state->surface = LoadRenderTexture(
     sys->window.width, sys->window.height - UI_UNIT_N(2)
@@ -26,7 +26,7 @@ void stage_game_update(sys_t *sys) {
 }
 
 void stage_game_draw(sys_t *sys) {
-  struct state_game *state = (struct state_game*)sys->temp;
+  struct context_game *state = (struct context_game*)sys->temp;
   const col_t bg_col = BLACK;
 
   BeginTextureMode(state->surface);
@@ -44,7 +44,7 @@ void stage_game_draw(sys_t *sys) {
 
 void stage_game_end(sys_t *sys) {
   TraceLog(LOG_INFO, "Exiting GAME");
-  struct state_game *state = (struct state_game*)sys->temp;
+  struct context_game *state = (struct context_game*)sys->temp;
   UnloadTexture(state->background);
   UnloadRenderTexture(state->surface);
 }

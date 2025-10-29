@@ -13,7 +13,7 @@ struct dirs_input {
 };
 
 /*== Utils ==*/
-void plr_process_coll(ent_t*, scr_t*);
+void plr_process_coll(ent_t*, room_t*);
 void plr_process_dirs(ent_t*, struct dirs_input);
 void apply_delta(ent_t*, f32);
 
@@ -27,7 +27,7 @@ void game_init(game_t *self, u32 width, u32 height) {
   self->player.y = ((f32)actual_height / 2.0f) - 8.0f;
 }
 
-bool will_collide(f32 x, f32 y, scr_t *data) {
+bool will_collide(f32 x, f32 y, room_t *data) {
   if (!data) return false;
   return scr_collision(data, (x / TILE_SIZE), (y / TILE_SIZE));
 }
@@ -66,7 +66,7 @@ void game_draw(game_t *self) {
   DrawRectangleRec(ent_coll(&self->player), RED);
 }
 
-void plr_process_coll(ent_t *self, scr_t *data) {
+void plr_process_coll(ent_t *self, room_t *data) {
   /*== Collisions WIP ==*/
   if (scr_collision(data,
     (self->x + self->xsp) / TILE_SIZE,

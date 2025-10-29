@@ -18,12 +18,13 @@ typedef struct window win_t;
 u32 win_get_w(win_t*);
 u32 win_get_h(win_t*);
 
-enum sys_state {
+enum system_state {
+  SYS_EXIT,
+  SYS_BOOT,
   SYS_TITLE,
   SYS_MENU,
-  SYS_TEST,
-  SYS_SETTINGS,
-  SYS_EXIT
+  SYS_GAME,
+  SYS_SETTINGS
 };
 
 typedef struct system {
@@ -32,13 +33,13 @@ typedef struct system {
   u8    next_state;
   u8    save_slot;
   f32   delta;
-  void *temp; /* this stores temporary data */
+  void *temp;
 
   /* structs */
   win_t     window;
   config_t  config;
-  ipt_t     inputs;
-  game_t    game; /* might move that into temp */
+  input_t   inputs;
+  game_t    game;
   rtex_t    surface;
 } system_t;
 typedef struct system sys_t;

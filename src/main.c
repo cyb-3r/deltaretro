@@ -6,8 +6,8 @@
 #include "debug.h"
 #endif
 
-#include "stage-title.h"
-#include "stage-file.h"
+#include "title-screen.h"
+#include "file-select.h"
 #include "stage-game.h"
 
 enum exit_code {
@@ -60,7 +60,7 @@ void begin(sys_t *sys) {
   switch(sys->state) {
     case SYS_TITLE: stage_title_begin(sys); break;
     case SYS_MENU:  stage_file_begin(sys); break;
-    case SYS_TEST:  stage_game_begin(sys); break;
+    case SYS_GAME:  stage_game_begin(sys); break;
 
     default:
     TraceLog(LOG_FATAL, "Undefined system state %d", sys->state);
@@ -76,7 +76,7 @@ void update(sys_t *sys) {
   switch(sys->state) {
     case SYS_TITLE: stage_title_update(sys); break;
     case SYS_MENU:  stage_file_update(sys); break;
-    case SYS_TEST:  stage_game_update(sys); break;
+    case SYS_GAME:  stage_game_update(sys); break;
 
     default:
     TraceLog(LOG_FATAL, "Undefined system state %d", sys->state);
@@ -91,7 +91,7 @@ void draw(sys_t *sys) {
   switch(sys->state) {
     case SYS_TITLE: stage_title_draw(sys); break;
     case SYS_MENU:  stage_file_draw(sys); break;
-    case SYS_TEST:  stage_game_draw(sys); break;
+    case SYS_GAME:  stage_game_draw(sys); break;
 
     default:
     TraceLog(LOG_FATAL, "Undefined system state %d", sys->state);
@@ -111,7 +111,7 @@ void end(sys_t *sys) {
   switch(sys->state) {
     case SYS_TITLE: stage_title_end(sys); break;
     case SYS_MENU:  stage_file_end(sys); break;
-    case SYS_TEST:  stage_game_end(sys); break;
+    case SYS_GAME:  stage_game_end(sys); break;
 
     default:
     TraceLog(LOG_FATAL, "Undefined system state %d", sys->state);
